@@ -1,0 +1,17 @@
+Package: tidymar
+Type: Package
+Title: R Interface to DC MAR
+Version: 0.1.0
+Authors@R: person(family = "Gupta", given = "Hersh", email = "hersh.gupta@dc.gov", role = c("aut","cre"))
+Description: District of Columbia's Master Address Repository (MAR) provides a web service
+    with geocoding and address verification operations. This package gives R users a set
+    of fuctions to interact with the MAR web service. 
+License: MIT + file LICENSE
+Depends: R (>= 3.2.0)
+Encoding: UTF-8
+LazyData: true
+Imports: 
+  httr,
+  dplyr,
+  tidyr
+RoxygenNote: 6.1.0
