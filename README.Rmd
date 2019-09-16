@@ -7,6 +7,9 @@ output: github_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
+library(tidyr)
+library(dplyr)
+library(tidymar)
 ```
 
 Interact with DC's Master Address Repository with R
@@ -36,12 +39,14 @@ The MAR web service is free to use and requies no credentialing!
 
 ## Usage
 
-```{r example}
-find_location(string = "1600 Pennsylvania Ave NW")
+Below is an example of the output provided by the MAR (in long format):
+
+```{r example, eval = TRUE, echo=TRUE}
+find_location(string = "1600 Pennsylvania Ave NW") %>% tidyr::gather() %>% print(n=Inf)
 ```
 
 
 ## Next Steps
 
 * Testing
-* Implementing additional functions
+* Implementing additional functions: [all available endpoints for the MAR webservice](https://citizenatlas.dc.gov/newwebservices/locationverifier.asmx)
