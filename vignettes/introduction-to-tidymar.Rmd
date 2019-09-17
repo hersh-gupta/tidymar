@@ -1,0 +1,69 @@
+---
+title: "Introduction to tidymar"
+author: "Hersh Gupta"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE,message=FALSE,warning=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE
+)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(tidymar)
+```
+
+The Office of the Chief Technology Officer for DC provides the [DC GIS Master Address Repository](https://dcatlas.dcgis.dc.gov/mar/) (MAR), available for the public to use. The MAR consists of various applications that rely on web services to find and verify DC-based locations. DC agencies may use the MAR Geocoder application to find, clean, and verify addresses. 
+
+Researchers, programmers, and data scientists may be more inclined to use [MAR web services](https://opendata.dc.gov/pages/mar-webservices) directly to reduce overhead from the Geocoder application and ensure reproducibility in analyses. Users can [query MAR web services using common HTTP methods](https://opendata.dc.gov/pages/mar-webservices#ember104). 
+
+The `tidymar` R package makes this process easier by providing pre-built functions corresponding to the services available through the MAR web services. This document introduces the `tidymar` package.
+
+## Basic Usage 
+
+To get started with the `tidymar` package, users should load it first.
+
+```{r loading, eval=T,echo=T}
+library(tidymar)
+```
+
+The main function currently implemented in `tidymar` is `find_location`. 
+
+This function serves as a catch-all for all verified DC locations, as it not only geocodes the address, but provider additional information about the location, such as Police Service Area (`PSA`), Neighborhood Cluster (`CLUSTER_`), Voter Precinct (`VOTE_PRCNT`), whether it has condo units or residential units (`HAS_CONDO`, `HAS_RES_UNIT`), and the confidence level (`CONFIDENCE_LEVEL`) of the matched location.
+
+In this basic example, we get the full address and coordinates of the White House using simply "white house" as the input string. The results are in a wide tibble format, which I convert to long and print the full results below:
+
+```{r example1, eval=T,echo=T}
+find_location("white house") %>% gather() %>% print(n = Inf)
+```
+
+The full MAR Data Dictionary is [available here](https://octo.dc.gov/sites/default/files/dc/sites/octo/publication/attachments/DCGIS_MarDataDictionary_0.pdf).
+
+## Batch Geocoding
+
+Let's say we have a list of DC addresses, (`locations`) and would like to geocode them. 
+
+```{r example2a, eval=T,echo=T}
+locations <- tibble(addr = c("899 North Capitol St NE", "1350 Pennsylvania Ave NW", "430 E St NW", "1600 Pennsylvania Ave NW", "1 First St NE"), 
+                    name = c("DC Department of Health", "John Wilson Building", "District of Columbia Court", "The White House", "US Supreme Court"), 
+                    type = c("local","local","local","federal","federal"))
+
+locations
+```
+
+The `find_location` can be vectorized over multiple addresses and returns all possible matching location data. It can also accept intersections, streets, and blocks. 
+
+```{r example2b, eval=T,echo=T}
+find_location(locations$addr)
+```
+
+

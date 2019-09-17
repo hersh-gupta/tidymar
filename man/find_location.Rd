@@ -4,10 +4,10 @@
 \alias{find_location}
 \title{Find DC Location}
 \usage{
-find_location(string)
+find_location(address)
 }
 \arguments{
-\item{string}{address string}
+\item{address}{address string or vector of addresses}
 }
 \value{
 tibble
@@ -18,5 +18,8 @@ location. It returns a table of all possible matching
 addresses based on the provided string.
 }
 \examples{
-find_location(string = "1600 Pennsylvania Ave NW")
+\dontrun{
+find_location(address = '1600 Pennsylvania Ave NW')
+}
+
 }

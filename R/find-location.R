@@ -5,18 +5,28 @@
 #' addresses based on the provided string.
 #'
 #' @md
-#' @param string address string
+#' @param address address string or vector of addresses
 #' @return tibble
-#' @export
 #' @examples
-#' find_location(string = "1600 Pennsylvania Ave NW")
-find_location <- function(string){
-  resp <- httr::GET("http://citizenatlas.dc.gov/newwebservices/locationverifier.asmx/findLocation2",
-                    query = list(str = string, f = "json"))
-  httr::stop_for_status(resp)
-  cont <- httr::content(resp, as = "parsed")
-  t <- cont$returnDataset$Table1
-  if(is.null(t)){stop("No Results Found")}
-  df <- listToDF(t)
-  df
+#' \dontrun{
+#' find_location(address = '1600 Pennsylvania Ave NW')
+#' }
+#'
+#' @export
+#' @importFrom RCurl base64
+#' @importFrom dplyr '%>%' bind_rows
+#' @importFrom tidyr gather unite
+#' @importFrom purrr map reduce flatten is_empty pluck
+
+find_location <- function(address) {
+    resp <- httr::POST("https://citizenatlas.dc.gov/newwebservices/locationverifier.asmx/findLocationBatch2", body = list(addr_base64 = chunk_parse(address),
+        addr_separator = "$", chunkSequnce_separator = "!", f = "json"), encode = "json")
+    httr::stop_for_status(resp)
+    cont <- httr::content(resp, as = "parsed")
+    t <- purrr::map(cont[-1], "returnDataset") %>% purrr::flatten() %>% purrr::flatten()
+    if (is.null(t) | purrr::is_empty(t)) {
+        stop("No Results Found")
+    }
+    df <- purrr::map(t, unlist) %>% purrr::map(dplyr::bind_rows) %>% purrr::reduce(dplyr::bind_rows)
+    df
 }
