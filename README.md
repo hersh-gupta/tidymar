@@ -24,7 +24,7 @@ Currently only the following function is implemented:
 You can install the development version from GitHub
 
 ``` r
-remotes::install_git("https://github.in.dc.gov/hershgupta/tidymar.git")
+remotes::install_github("hguptadc/tidymar")
 ```
 
 ## Usage
